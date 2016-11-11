@@ -34,8 +34,8 @@ public class TwitterAPI {
         ArrayList<Status> tweets = new ArrayList<Status>();
         Twitter twitter = tf.getInstance();
         long lastID = Long.MAX_VALUE;
+        Query query = new Query(key);
         for (int i=0; i<5; i++) {
-            Query query = new Query(key);
             query.setCount(100);
             try {
                 QueryResult result = twitter.search(query);
@@ -44,7 +44,7 @@ public class TwitterAPI {
                     if (t.getId() < lastID) lastID = t.getId();
             } catch (TwitterException te) {}
             query.setMaxId(lastID-1);
-            System.out.println("Get 100 tweets");
+            System.out.println("Get " + i + "00 tweets");
         }
         
         System.out.println("Saving to file data/tweet.csv...");
