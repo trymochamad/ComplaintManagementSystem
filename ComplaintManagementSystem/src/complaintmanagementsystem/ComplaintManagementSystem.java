@@ -5,6 +5,10 @@
  */
 package complaintmanagementsystem;
 
+import java.util.ArrayList;
+
+
+
 /**
  *
  * @author TOSHIBA PC
@@ -16,6 +20,9 @@ public class ComplaintManagementSystem {
      */
     public static void main(String[] args) {
         // TODO code application logic here
+        FileReaderCSV reader = new FileReaderCSV();
+        ArrayList tweet = reader.readFile("data/tweet_500.csv");
+
     }
     
 }
