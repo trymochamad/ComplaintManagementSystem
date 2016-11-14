@@ -17,9 +17,9 @@ import java.util.ArrayList;
  */
 
 public class PreprosesTweet {
-    protected IndonesianSentenceFormalization formalizer; 
-    protected IndonesianSentenceTokenizer tokenizer; 
-    protected IndonesianStemmer stemmer;
+    public IndonesianSentenceFormalization formalizer; 
+    public IndonesianSentenceTokenizer tokenizer; 
+    public IndonesianStemmer stemmer;
     
     //konstruktor
     public PreprosesTweet(){
@@ -63,6 +63,11 @@ public class PreprosesTweet {
     public String prosesNoNeed (String _text){
     //Menghapus @ridwankamil @pemkotBandung, angka
         String text = _text;
+        boolean match;
+        if (match = text.matches("@")) 
+        {
+            text = text.replaceAll("@\\w+", "namaMention");
+        }
         text = text.replaceAll("[^a-zA-Z\\s]", " ");
         return text;
     }

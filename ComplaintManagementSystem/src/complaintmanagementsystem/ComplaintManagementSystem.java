@@ -6,6 +6,7 @@
 package complaintmanagementsystem;
 
 import java.util.ArrayList;
+import java.util.Scanner;
 
 
 
@@ -22,6 +23,15 @@ public class ComplaintManagementSystem {
         // TODO code application logic here
         FileReaderCSV reader = new FileReaderCSV();
         ArrayList tweet = reader.readFile("data/tweet_500.csv");
+        
+        //preproses 
+        PreprosesTweet preprosesTweet = new PreprosesTweet();
+        tweet = preprosesTweet.preprocessTweet(tweet);
+        for (int i = 0; i< tweet.size(); i++){
+            System.out.print(tweet.get(i));
+        }
+        
+        
 
     }
     
