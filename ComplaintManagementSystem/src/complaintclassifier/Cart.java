@@ -56,10 +56,10 @@ public class Cart {
         //Cross validation 10 Fold
         if(option==1) {
             eval.crossValidateModel(tree, dataTrain, 10, new Random(1));
+        } else{
+            eval.evaluateModel(cls, dataTest);
         }
-        
-        eval.evaluateModel(cls, dataTest);
-        
+       
         System.out.println(eval.toSummaryString("\nSummary\n======\n", false));   
         System.out.println(eval.toClassDetailsString("\nStatistic\n======\n"));
         System.out.println(eval.toMatrixString("\nConfusion Matrix\n======\n"));

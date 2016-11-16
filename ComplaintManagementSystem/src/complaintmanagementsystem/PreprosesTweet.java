@@ -30,33 +30,30 @@ public class PreprosesTweet {
         formalizer.initStopword();   
     }
     
-    public ArrayList preprocessTweet (ArrayList listOfText){
-        ArrayList processed = new ArrayList(); 
-        for (int i=0; i<listOfText.size(); i++){
-            //Formalisasi 
-            String text = formalizer.normalizeSentence(listOfText.get(i).toString());
-            
-            //Hapus semua yang tidak diperlukan 
-            text = prosesNoNeed(text.toLowerCase());
-            
-            //Tokenisasi 
-            ArrayList<String> words = tokenizer.tokenizeSentence(text);
-            
-            //Stemming 
-            StringBuilder result = new StringBuilder(); 
-            for (String word : words){
-                if (word.length() > 1){
-                    word = stemmer.stem(word);
-                    word = formalizer.formalizeWord(word);
-                    result.append(word + " ");
-                }
-            }
-            //Hapus Stop word 
-            String finalize = formalizer.deleteStopword(result.toString());
-            processed.add(finalize);
-            
-        }
+    public String preprocessTweet (String text){
+        String processed = new String(); 
         
+        //Formalisasi 
+        processed = formalizer.normalizeSentence(text);
+
+        //Hapus semua yang tidak diperlukan 
+        processed = prosesNoNeed(text.toLowerCase());
+
+        //Tokenisasi 
+        ArrayList<String> words = tokenizer.tokenizeSentence(processed);
+
+        //Stemming 
+        StringBuilder result = new StringBuilder(); 
+        for (String word : words){
+            if (word.length() > 1){
+                word = stemmer.stem(word);
+                word = formalizer.formalizeWord(word);
+                result.append(word + " ");
+            }
+        }
+        //Hapus Stop word 
+        String finalize = formalizer.deleteStopword(result.toString());
+        processed = finalize;        
         return processed; 
     }
     

@@ -14,6 +14,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import weka.attributeSelection.AttributeSelection;
 import weka.attributeSelection.InfoGainAttributeEval;
@@ -27,51 +28,29 @@ import weka.core.Instances;
 public class ComplaintFeatures {
     
         protected IndonesianSentenceTokenizer tokenizer;
+        protected List<String[]> data;
+        protected ArrayList<String> features; 
         
-        public ComplaintFeatures() {
+        public ComplaintFeatures(List<String[]> data) {
+            this.data = data;
             tokenizer = new IndonesianSentenceTokenizer();
+            features = new ArrayList();    
         }
         
         
-        public ArrayList<String> generateFeatures(ArrayList<String> spam, ArrayList<String> notSpam) throws FileNotFoundException, IOException, Exception{
-        Map<String,Integer[]> counter = new HashMap<>();
-        ArrayList<String> result = new ArrayList<>();
-        
-        for(int i=0; i<spam.size(); i++) {
-            ArrayList<String> token = tokenizer.tokenizeSentence(spam.get(i));           
+    public void generateFeatures() throws FileNotFoundException, IOException, Exception{ 
+        for(int i=0; i<data.size(); i++) {
+            ArrayList<String> token = tokenizer.tokenizeSentence(data.get(i)[2]);
             
-            for(int j=0; j< token.size(); j++) {
-                if(!counter.containsKey(token.get(j))) {
-                    Integer[] temp = {1,0}; 
-                    counter.put(token.get(j),temp);
-                } else {
-                    Integer[] temp = counter.get(token.get(j));
-                    temp[0]++;
-                    counter.put(token.get(j), temp);
+            for(int j=0; j<token.size(); j++) {
+                if(!features.contains(token.get(j)) && token.get(j).length() > 1) {
+                    features.add(token.get(j));
                 }
             }
-        }
-        
-        for(int i=0; i<notSpam.size(); i++) {
-            ArrayList<String> token = tokenizer.tokenizeSentence(notSpam.get(i));
-            
-            for(int j=0; j< token.size(); j++) {
-                if(!counter.containsKey(token.get(j))) {
-                    Integer[] temp = {0,1}; 
-                    counter.put(token.get(j),temp);
-                } else {
-                    Integer[] temp = counter.get(token.get(j));
-                    temp[1]++;
-                    counter.put(token.get(j), temp);
-                }
-            }
-        }
-        
-        result.addAll(counter.keySet());                
-        return result;
+        }              
     }
     
-    public ArrayList<String> featureSelection(String arffFile) throws FileNotFoundException, IOException, Exception {
+    public void featureSelection(String arffFile) throws FileNotFoundException, IOException, Exception {
         
         BufferedReader reader = new BufferedReader(new FileReader(arffFile));
         Instances data = new Instances(reader);
@@ -81,7 +60,7 @@ public class ComplaintFeatures {
         AttributeSelection selector = new AttributeSelection();
         InfoGainAttributeEval evaluator = new InfoGainAttributeEval();
         Ranker ranker = new Ranker();
-        ranker.setNumToSelect(Math.min(1000, data.numAttributes() - 1));
+        ranker.setNumToSelect(Math.min(2000, data.numAttributes() - 1));
         selector.setEvaluator(evaluator);
         selector.setSearch(ranker);
         selector.SelectAttributes(data);
@@ -92,11 +71,11 @@ public class ComplaintFeatures {
             result.add(data.attribute(selectedAttr[i]).name());
         }
         
-        return result;
+        features = result;
     }
     
 
-    public void writeToArff(ArrayList<String> attribute, ArrayList spam, ArrayList notSpam, String filename) {
+    public void writeToArff(String filename) {
         try {
             File file = new File(filename);
             if (!file.exists()) {
@@ -105,34 +84,34 @@ public class ComplaintFeatures {
 
             java.io.FileWriter fw = new java.io.FileWriter(file.getAbsoluteFile());
             BufferedWriter bw = new BufferedWriter(fw);
-            bw.write("@relation spam\n\n");
-            for (int i = 0; i < attribute.size(); i++) {
-                bw.write("@attribute " + (String) attribute.get(i) + " {0,1}\n");
+            bw.write("@relation complaint\n\n");
+            for (int i = 0; i < features.size(); i++) {
+                bw.write("@attribute " + (String) features.get(i) + " {0,1}\n");
             }
-            bw.write("@attribute class {spam,notspam}\n\n@data\n\n");
-            for (int i = 0; i < spam.size(); i++) {
-                for (int j = 0; j < attribute.size(); j++) {
-                    if (((String)spam.get(i)).contains((String)attribute.get(j))) {
+            bw.write("@attribute class {complaint,notcomplaint}\n\n@data\n\n");
+            
+            for(int i=0; i<data.size(); i++){
+                for (int j = 0; j < features.size(); j++) {
+                    if (((String)data.get(i)[1]).contains((String)features.get(j))) {
                         bw.write("1,");
                     } else {
                         bw.write("0,");
                     }
                 }
-                bw.write("spam\n");
-            }
-            for (int i = 0; i < notSpam.size(); i++) {
-                for (int j = 0; j < attribute.size(); j++) {
-                    if (((String)notSpam.get(i)).contains((String)attribute.get(j))) {
-                        bw.write("1,");
-                    } else {
-                        bw.write("0,");
-                    }
+                if(data.get(i)[3].equals("Ya")){    
+                    bw.write("complaint\n");
+                } else {
+                    bw.write("notcomplaint\n");
                 }
-                bw.write("notspam\n");
             }
             bw.close();
+            
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+    
+    public ArrayList<String> getFeatures(){
+        return features;
     }
 }
