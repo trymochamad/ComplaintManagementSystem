@@ -31,10 +31,7 @@ public class IOFileCSV {
         CSVReader reader = new CSVReader(new FileReader(filename));
         List myEntries = reader.readAll();
         myEntries.subList(0, 3).clear();
-        
-        //Temporary 3000 tweets, because 7000 so huge
-        myEntries = myEntries.subList(0, 3000);
-        
+       
         return myEntries;
     }        
 }

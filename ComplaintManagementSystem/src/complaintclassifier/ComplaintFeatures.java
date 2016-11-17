@@ -27,15 +27,15 @@ import weka.core.Instances;
  */
 public class ComplaintFeatures {
     
-        protected IndonesianSentenceTokenizer tokenizer;
-        protected List<String[]> data;
-        protected ArrayList<String> features; 
+    protected IndonesianSentenceTokenizer tokenizer;
+    protected List<String[]> data;
+    protected ArrayList<String> features; 
         
-        public ComplaintFeatures(List<String[]> data) {
-            this.data = data;
-            tokenizer = new IndonesianSentenceTokenizer();
-            features = new ArrayList();    
-        }
+    public ComplaintFeatures(List<String[]> data) {
+        this.data = data;
+        tokenizer = new IndonesianSentenceTokenizer();
+        features = new ArrayList();    
+    }
         
         
     public void generateFeatures() throws FileNotFoundException, IOException, Exception{ 
@@ -75,7 +75,7 @@ public class ComplaintFeatures {
     }
     
 
-    public void writeToArff(String filename) {
+    public void writeToArff(String filename, List<String> attributes) {
         try {
             File file = new File(filename);
             if (!file.exists()) {
@@ -85,14 +85,14 @@ public class ComplaintFeatures {
             java.io.FileWriter fw = new java.io.FileWriter(file.getAbsoluteFile());
             BufferedWriter bw = new BufferedWriter(fw);
             bw.write("@relation complaint\n\n");
-            for (int i = 0; i < features.size(); i++) {
-                bw.write("@attribute " + (String) features.get(i) + " {0,1}\n");
+            for (int i = 0; i < attributes.size(); i++) {
+                bw.write("@attribute " + (String) attributes.get(i) + " {0,1}\n");
             }
             bw.write("@attribute class {complaint,notcomplaint}\n\n@data\n\n");
             
             for(int i=0; i<data.size(); i++){
-                for (int j = 0; j < features.size(); j++) {
-                    if (((String)data.get(i)[2]).contains((String)features.get(j))) {
+                for (int j = 0; j < attributes.size(); j++) {
+                    if (((String)data.get(i)[2]).contains((String)attributes.get(j))) {
                         bw.write("1,");
                     } else {
                         bw.write("0,");
@@ -103,6 +103,38 @@ public class ComplaintFeatures {
                 } else {
                     bw.write("notcomplaint\n");
                 }
+            }
+            bw.close();
+            
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    public void writeToArffTestFile(String filename, ArrayList<String> attributes) {
+        try {
+            File file = new File(filename);
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+
+            java.io.FileWriter fw = new java.io.FileWriter(file.getAbsoluteFile());
+            BufferedWriter bw = new BufferedWriter(fw);
+            bw.write("@relation complaint\n\n");
+            for (int i = 0; i < attributes.size(); i++) {
+                bw.write("@attribute " + (String) attributes.get(i) + " {0,1}\n");
+            }
+            bw.write("@attribute class {complaint,notcomplaint}\n\n@data\n\n");
+            
+            for(int i=0; i<data.size(); i++){
+                for (int j = 0; j < attributes.size(); j++) {
+                    if (((String)data.get(i)[2]).contains((String)attributes.get(j))) {
+                        bw.write("1,");
+                    } else {
+                        bw.write("0,");
+                    }
+                }   
+                bw.write("?\n");
             }
             bw.close();
             

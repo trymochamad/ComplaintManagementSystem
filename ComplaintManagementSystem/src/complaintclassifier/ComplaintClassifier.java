@@ -7,12 +7,14 @@ package complaintclassifier;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
 import weka.classifiers.trees.J48;
+import weka.core.Instance;
 import weka.core.Instances;
 
 /**
@@ -25,17 +27,22 @@ public class ComplaintClassifier {
     protected Instances train;
     protected Classifier classifier;
     protected Evaluation eval;
+    protected ArrayList<String> features; 
     
-    public ComplaintClassifier(List<String[]> data) {
-        this.data = data;
+    public ComplaintClassifier(List<String[]> list) {
+        data = list;
+        
+        //Temporary 3000 tweets, because 7000 so huge
+        data = data.subList(0, 3000);       
     }
     
     public void generateTrainData() throws Exception {
         ComplaintFeatures cf = new ComplaintFeatures(data);
         cf.generateFeatures();
-        cf.writeToArff("data/complainData.arff");
+        features = cf.getFeatures();
+        cf.writeToArff("data/complainData.arff", features);
         cf.featureSelection("data/complainData.arff");
-        cf.writeToArff("data/complainData.arff");
+        cf.writeToArff("data/complainData.arff", features);
         
         BufferedReader reader = new BufferedReader(new FileReader("data/complainData.arff"));
         train = new Instances(reader);
@@ -66,5 +73,18 @@ public class ComplaintClassifier {
     public void crossValidate(int folds) throws Exception {
         eval = new Evaluation(train);
         eval.crossValidateModel(classifier, train, folds, new Random(1));     
+    }
+    
+    public void classifyUnseenData(List<String[]> data) throws IOException, Exception {
+        ComplaintFeatures cf = new ComplaintFeatures(data);
+        cf.writeToArff("data/complaintTest.arff", features);
+        
+        BufferedReader reader = new BufferedReader(new FileReader("data/complaintTest.arff"));
+        Instances test = new Instances(reader);
+        test.setClassIndex(test.numAttributes() - 1);
+        reader.close();
+        
+        eval = new Evaluation(train);
+        eval.evaluateModel(classifier, test);       
     }
 }

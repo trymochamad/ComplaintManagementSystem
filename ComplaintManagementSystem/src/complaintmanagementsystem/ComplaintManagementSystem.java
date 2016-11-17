@@ -26,6 +26,10 @@ public class ComplaintManagementSystem {
         IOFileCSV reader = new IOFileCSV("data/tweets_labelled.csv");
         List<String[]> tweets = reader.readFile();
         
+        //test file 
+        reader = new IOFileCSV("data/testcase.csv");
+        List<String[]> test = reader.readFile();
+        
         //Preproses tweet
         PreprosesTweet pt = new PreprosesTweet();
         for(int i=0; i< tweets.size(); i++) {
@@ -38,7 +42,8 @@ public class ComplaintManagementSystem {
         classifier.generateTrainData();
         classifier.buildClassifierJ48();
         classifier.printTree();
-        classifier.fullTraining();
+        classifier.classifyUnseenData(test);
+        //classifier.fullTraining();
         //classifier.crossValidate(10);
         classifier.printResult();
     }
