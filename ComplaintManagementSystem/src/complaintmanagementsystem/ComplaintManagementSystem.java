@@ -26,31 +26,21 @@ public class ComplaintManagementSystem {
         IOFileCSV reader = new IOFileCSV("data/tweets_labelled.csv");
         List<String[]> tweets = reader.readFile();
         
-        
+        //Preproses tweet
         PreprosesTweet pt = new PreprosesTweet();
         for(int i=0; i< tweets.size(); i++) {
             String formalized = pt.preprocessTweet(tweets.get(i)[2]);
             tweets.get(i)[2] = formalized;
         }
-       
-        
+         
+        //Classify using J48
         ComplaintClassifier classifier = new ComplaintClassifier(tweets);
-        classifier.classifyCart();
-        
-        
-//        // TODO code application logic here
-//        FileReaderCSV reader = new FileReaderCSV();
-//        List tweet = reader.readFile("data/tweet_500.csv");
-//        
-//        //preproses 
-//        PreprosesTweet preprosesTweet = new PreprosesTweet();
-//        tweet = preprosesTweet.preprocessTweet(tweet);
-//        for (int i = 0; i< tweet.size(); i++){
-//            System.out.print(tweet.get(i));
-//        }
-        
-        
-
+        classifier.generateTrainData();
+        classifier.buildClassifierJ48();
+        classifier.printTree();
+        classifier.fullTraining();
+        //classifier.crossValidate(10);
+        classifier.printResult();
     }
     
 }

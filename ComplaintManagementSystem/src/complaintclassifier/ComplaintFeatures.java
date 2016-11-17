@@ -60,7 +60,7 @@ public class ComplaintFeatures {
         AttributeSelection selector = new AttributeSelection();
         InfoGainAttributeEval evaluator = new InfoGainAttributeEval();
         Ranker ranker = new Ranker();
-        ranker.setNumToSelect(Math.min(2000, data.numAttributes() - 1));
+        ranker.setNumToSelect(Math.min(1000, data.numAttributes() - 1));
         selector.setEvaluator(evaluator);
         selector.setSearch(ranker);
         selector.SelectAttributes(data);
@@ -92,7 +92,7 @@ public class ComplaintFeatures {
             
             for(int i=0; i<data.size(); i++){
                 for (int j = 0; j < features.size(); j++) {
-                    if (((String)data.get(i)[1]).contains((String)features.get(j))) {
+                    if (((String)data.get(i)[2]).contains((String)features.get(j))) {
                         bw.write("1,");
                     } else {
                         bw.write("0,");

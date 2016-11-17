@@ -32,8 +32,8 @@ public class IOFileCSV {
         List myEntries = reader.readAll();
         myEntries.subList(0, 3).clear();
         
-        //Temporary 5000 tweets, because 7000 so huge
-        myEntries = myEntries.subList(0, 5000);
+        //Temporary 3000 tweets, because 7000 so huge
+        myEntries = myEntries.subList(0, 3000);
         
         return myEntries;
     }        
