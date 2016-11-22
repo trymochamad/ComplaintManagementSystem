@@ -29,14 +29,14 @@ public class ComplaintClassifier {
     protected Evaluation eval;
     protected ArrayList<String> features; 
     
-    public ComplaintClassifier(List<String[]> list) {
+    public ComplaintClassifier() { }
+    
+    public void generateTrainData(List<String[]> list) throws Exception {
         data = list;
         
         //Temporary 3000 tweets, because 7000 so huge
-        data = data.subList(0, 3000);       
-    }
-    
-    public void generateTrainData() throws Exception {
+        data = data.subList(0, 3000);  
+        
         ComplaintFeatures cf = new ComplaintFeatures(data);
         cf.generateFeatures();
         features = cf.getFeatures();

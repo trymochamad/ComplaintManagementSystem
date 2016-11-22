@@ -6,12 +6,19 @@
 package topicclassifier;
 
 import IndonesianNLP.IndonesianSentenceTokenizer;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -21,8 +28,8 @@ public class TopicClassifier {
     
     protected IndonesianSentenceTokenizer tokenizer;
     protected Set<String> vocabulary;
-    protected int[] prior;
-    protected  Map<String,double[]> condProb;
+    protected double[] prior;
+    protected Map<String,double[]> condProb;
     
     // Daftar dinas
     final static String[] topic = {
@@ -43,7 +50,7 @@ public class TopicClassifier {
     public TopicClassifier() {
         tokenizer = new IndonesianSentenceTokenizer();
         vocabulary = new HashSet<>();
-        prior = new int[12];
+        prior = new double[12];
         condProb = new HashMap<>();
     }
     
@@ -93,11 +100,15 @@ public class TopicClassifier {
         
         // Calculate prior and condProb
         for (int i=0; i<12; i++) {
-            prior[i] = numTopic[i] / corpusSize;
+            prior[i] = (double) numTopic[i] / corpusSize;
             String text = concatTweet(corpus, i);
             Map<String,Integer> counterToken = new HashMap<>();
             for (String token : vocabulary) {
-                counterToken.put(token, countOccurence(text, token));
+                counterToken.put(token, StringUtils.countMatches(text, token));
+            }
+            int sum = 0;
+            for (Map.Entry<String,Integer> entry : counterToken.entrySet()) {
+                sum += entry.getValue();
             }
             for (String token : vocabulary) {
                 double[] value;
@@ -108,7 +119,7 @@ public class TopicClassifier {
                     for (int j=0; j<12; j++)
                         value[j] = 0;
                 }
-                value[i] = (counterToken.get(token) + 1) / (vocabulary.size());
+                value[i] = (double) (counterToken.get(token) + 1) / (sum + (vocabulary.size()));
                 condProb.put(token, value);
             }
         }
@@ -117,28 +128,113 @@ public class TopicClassifier {
         saveModel();
     }
     
-    public void loadModel(String filename) {
+    public void loadModel() {
+        // Load vocabulary
+        ArrayList<String> content = readFile("model/TopicClassifier.vocabulary");
+        this.vocabulary.addAll(content);
+        content.clear();
         
+        // Load prior
+        content = readFile("model/TopicClassifier.prior");
+        for (int i=0; i<12; i++) {
+            this.prior[i] = Double.parseDouble(content.get(i));
+        }
+        content.clear();
+        
+        // Load condProb
+        content = readFile("model/TopicClassifier.condProb");
+        for (int i=0; i<content.size(); i++) {
+            String[] strArray = content.get(i).split(" ");
+            double[] value = new double[strArray.length-1];
+            for (int j=0; j<value.length; j++) {
+                value[j] = Double.parseDouble(strArray[j+1]);
+            }
+            this.condProb.put(strArray[0], value);
+        }
+        content.clear();
     }
     
     public void saveModel() {
+        // Save vocabulary
+        StringBuilder vocabBuilder = new StringBuilder();
+        for (String token : vocabulary) {
+            vocabBuilder.append(token).append("\n");
+        }
+        writeFile("model/TopicClassifier.vocabulary", vocabBuilder.toString());
         
+        // Save prior
+        StringBuilder priorBuilder = new StringBuilder();
+        for (int i=0; i<prior.length; i++) {
+            priorBuilder.append(prior[i]).append("\n");
+        }
+        writeFile("model/TopicClassifier.prior", priorBuilder.toString());
+        
+        // Save condProb
+        StringBuilder condProbBuilder = new StringBuilder();
+        for (Map.Entry<String,double[]> entry : condProb.entrySet()) {
+            condProbBuilder.append(entry.getKey()).append(" ");
+            double[] value = entry.getValue();
+            for (int i=0; i<value.length; i++) {
+                condProbBuilder.append(value[i]).append(" ");
+            }
+            condProbBuilder.append("\n");
+        }
+        writeFile("model/TopicClassifier.condProb", condProbBuilder.toString());
+    }
+    
+    public ArrayList<String> readFile(String filename) {    
+        BufferedReader br = null;
+        String line;
+        ArrayList<String> content = new ArrayList();
+
+        try {
+            br = new BufferedReader(new FileReader(filename));
+            while ((line = br.readLine()) != null) {
+                content.add(line);
+            }
+        } catch (FileNotFoundException e) {
+            System.out.println("Currently no model is saved. Build first.");
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (br != null) {
+                try {
+                    br.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        
+        return content;
+    }
+    
+    public void writeFile(String filename, String content) {
+        try {
+            File file = new File(filename);
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+
+            java.io.FileWriter fw = new java.io.FileWriter(file.getAbsoluteFile());
+            BufferedWriter bw = new BufferedWriter(fw);
+            bw.write(content);
+            bw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
     
     public String concatTweet(List<String[]> corpus, int topicIdx) {
         StringBuilder result = new StringBuilder();
         for (int i=0; i<corpus.size(); i++) {
             if (corpus.get(i)[5].equals(topic[topicIdx]))
-                result.append(corpus.get(i)[2] + " ");
+                result.append(corpus.get(i)[2]).append(" ");
         }
         return result.toString();
     }
     
-    public int countOccurence(String text, String token) {
-        return 0;
-    }
-    
-    public void classifyTweet(String tweet) {
+    public String classifyTweet(String tweet) {
         // Extract unique token
         ArrayList<String> tokens = tokenizer.tokenizeSentence(tweet);
         Set<String> temp = new HashSet<>();
@@ -157,8 +253,7 @@ public class TopicClassifier {
                 idxMax = i;
         }
         
-        System.out.println("Tweet untuk " + topic[idxMax]);
+        return topic[idxMax];
     }
-    
-    
+       
 }

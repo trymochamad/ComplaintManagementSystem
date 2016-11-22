@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import topicclassifier.TopicClassifier;
 
 
 
@@ -18,34 +19,55 @@ import java.util.Scanner;
  * @author TOSHIBA PC
  */
 public class ComplaintManagementSystem {
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) throws IOException, Exception {
-        IOFileCSV reader = new IOFileCSV("data/tweets_labelled.csv");
+    
+    protected ComplaintClassifier complaintClassifier;
+    protected TopicClassifier topicClassifier;
+    
+    public ComplaintManagementSystem() {
+        complaintClassifier = new ComplaintClassifier();
+        topicClassifier = new TopicClassifier();
+    }
+    
+    public void buildModel() throws IOException, Exception {
+        IOFileCSV reader = new IOFileCSV("data/tweets_labelled_dinas.csv");
         List<String[]> tweets = reader.readFile();
         
-        //test file 
-        reader = new IOFileCSV("data/testcase.csv");
-        List<String[]> test = reader.readFile();
-        
-        //Preproses tweet
+        // Preproses tweet
         PreprosesTweet pt = new PreprosesTweet();
         for(int i=0; i< tweets.size(); i++) {
             String formalized = pt.preprocessTweet(tweets.get(i)[2]);
             tweets.get(i)[2] = formalized;
         }
          
-        //Classify using J48
-        ComplaintClassifier classifier = new ComplaintClassifier(tweets);
-        classifier.generateTrainData();
-        classifier.buildClassifierJ48();
-        classifier.printTree();
-        classifier.classifyUnseenData(test);
-        //classifier.fullTraining();
-        //classifier.crossValidate(10);
-        classifier.printResult();
+        // Classify using J48
+        complaintClassifier.generateTrainData(tweets);
+        complaintClassifier.buildClassifierJ48();
+        complaintClassifier.printTree();
+        
+        topicClassifier.buildModel(tweets);
+    }
+    
+    public void loadModel() {
+        // Load complaintClassifier
+        
+        // Load topicClassifier
+        topicClassifier.loadModel();
+    }
+    
+    public void classifyTweet(String filename) throws IOException {
+        IOFileCSV reader = new IOFileCSV(filename);
+        List<String[]> tweets = reader.readFile();
+        for (int i=0; i< tweets.size(); i++) {
+            String result = topicClassifier.classifyTweet(tweets.get(i)[0]);
+            System.out.println(result);
+        }
+    }
+    
+    public void evaluateModel() throws IOException, Exception {
+        IOFileCSV reader = new IOFileCSV("data/testcase.csv");
+        List<String[]> test = reader.readFile();
+        complaintClassifier.classifyUnseenData(test);
+        complaintClassifier.printResult();
     }
     
 }
