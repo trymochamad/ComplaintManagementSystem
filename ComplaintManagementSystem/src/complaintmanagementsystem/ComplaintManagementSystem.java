@@ -58,28 +58,28 @@ public class ComplaintManagementSystem {
         IOFileCSV reader = new IOFileCSV(filename);
         List<String[]> tweets = reader.readFile();
         
-        List<String> result = new ArrayList();
-        result.add("Labelled Tweet,,");
-        result.add(",,,");
-        result.add("Tweet,Keluhan,Topik");
+        List<String[]> result = new ArrayList();
+        result.add(new String[] {"Labelled Tweet","",""});
+        result.add(new String[] {"","",""});
+        result.add(new String[] {"Tweet","Keluhan","Topik"});
         
         for (int i=0; i< tweets.size(); i++) {
-            StringBuilder tweetBuilder = new StringBuilder(tweets.get(i)[0]);
+            String[] record = new String[3];
+            record[0] = tweets.get(i)[0];
             
             String complaint = complaintClassifier.classifyUnseenData(tweets.get(i)[0]);
             
-            
             if(complaint.equals("complaint")) {
-                tweetBuilder.append(",").append("Ya").append(",");
-                tweetBuilder.append("Topik Sesuatu");
-                //tweetBuilder.append(topicClassifier.classifyTweet(tweets.get(i)[0]));
+                record[1] = "Ya";
+                record[2] = "Topik Sesuatu";
+                //record[2] = topicClassifier.classifyTweet(tweets.get(i)[0]);
                 
             } else {
-                tweetBuilder.append(",").append("Tidak").append(",");
-                tweetBuilder.append("Bukan Keluhan");
+                record[1] = "Tidak";
+                record[2] = "Bukan Keluhan";
             }
             
-            result.add(tweetBuilder.toString());
+            result.add(record);
         }
         
         IOFileCSV writer = new IOFileCSV("test/result.csv");

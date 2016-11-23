@@ -36,11 +36,10 @@ public class IOFileCSV {
         return myEntries;
     }
     
-    public void writeFile(List<String> content) throws IOException {
+    public void writeFile(List<String[]> content) throws IOException {
         CSVWriter writer = new CSVWriter(new FileWriter(filename));
         for (int i=0; i<content.size(); i++) {
-            String [] record = content.get(i).split(",");
-            writer.writeNext(record);
+            writer.writeNext(content.get(i));
         }
         writer.close();
     }
