@@ -47,9 +47,9 @@ public class ComplaintManagementSystem {
         topicClassifier.buildModel(tweets);
     }
     
-    public void loadModel() {
+    public void loadModel() throws Exception {
         // Load complaintClassifier
-        
+        complaintClassifier.loadModel("model/Complaint.model");
         // Load topicClassifier
         topicClassifier.loadModel();
     }
