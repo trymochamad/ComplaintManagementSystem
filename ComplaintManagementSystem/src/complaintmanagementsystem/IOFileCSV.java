@@ -6,6 +6,7 @@
 package complaintmanagementsystem;
 
 import com.opencsv.CSVReader;
+import com.opencsv.CSVWriter;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
@@ -33,5 +34,14 @@ public class IOFileCSV {
         myEntries.subList(0, 3).clear();
        
         return myEntries;
-    }        
+    }
+    
+    public void writeFile(List<String> content) throws IOException {
+        CSVWriter writer = new CSVWriter(new FileWriter(filename));
+        for (int i=0; i<content.size(); i++) {
+            String [] record = content.get(i).split(",");
+            writer.writeNext(record);
+        }
+        writer.close();
+    }
 }

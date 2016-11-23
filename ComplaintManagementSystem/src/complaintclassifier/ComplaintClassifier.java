@@ -98,10 +98,9 @@ public class ComplaintClassifier {
         eval.evaluateModel(classifier, test);  
     }
     
-    public void classifyUnseenData(String tweet) throws Exception {
+    public String classifyUnseenData(String tweet) throws Exception {
         PreprosesTweet preproses = new PreprosesTweet();
         tweet = preproses.preprocessTweet(tweet);
-        System.out.println(tweet);
         
         Instance newInstance = new DenseInstance(train.numAttributes());
         newInstance.setDataset(train);
@@ -113,13 +112,12 @@ public class ComplaintClassifier {
             }
         }
         
-        
         double clsLabel = classifier.classifyInstance(newInstance);
         newInstance.setClassValue(clsLabel);
         
         String result = train.classAttribute().value((int) clsLabel);
         
-        System.out.println("Hasil Classify Unseen Data: " + result);
+        return result;
     }
     
     public void saveModel(String filename) throws Exception {

@@ -55,14 +55,36 @@ public class ComplaintManagementSystem {
     }
     
     public void classifyTweet(String filename) throws IOException, Exception {
-        complaintClassifier.classifyUnseenData("");
-        topicClassifier.classifyTweet("");
- //       IOFileCSV reader = new IOFileCSV(filename);
-//        List<String[]> tweets = reader.readFile();
-//        for (int i=0; i< tweets.size(); i++) {
-//            String result = topicClassifier.classifyTweet(tweets.get(i)[0]);
-//            System.out.println(result);
-//        }
+        IOFileCSV reader = new IOFileCSV(filename);
+        List<String[]> tweets = reader.readFile();
+        
+        List<String> result = new ArrayList();
+        result.add("Labelled Tweet,,");
+        result.add(",,,");
+        result.add("Tweet,Keluhan,Topik");
+        
+        for (int i=0; i< tweets.size(); i++) {
+            StringBuilder tweetBuilder = new StringBuilder(tweets.get(i)[0]);
+            
+            String complaint = complaintClassifier.classifyUnseenData(tweets.get(i)[0]);
+            
+            
+            if(complaint.equals("complaint")) {
+                tweetBuilder.append(",").append("Ya").append(",");
+                tweetBuilder.append("Topik Sesuatu");
+                //tweetBuilder.append(topicClassifier.classifyTweet(tweets.get(i)[0]));
+                
+            } else {
+                tweetBuilder.append(",").append("Tidak").append(",");
+                tweetBuilder.append("Bukan Keluhan");
+            }
+            
+            result.add(tweetBuilder.toString());
+        }
+        
+        IOFileCSV writer = new IOFileCSV("test/result.csv");
+        writer.writeFile(result);
+        
     }
     
     public void evaluateModel() throws IOException, Exception {
