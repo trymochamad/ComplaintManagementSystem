@@ -49,25 +49,29 @@ public class ComplaintManagementSystem {
     
     public void loadModel() throws Exception {
         // Load complaintClassifier
-        complaintClassifier.loadModel("model/Complaint.model");
+        complaintClassifier.loadModel();
         // Load topicClassifier
         topicClassifier.loadModel();
     }
     
-    public void classifyTweet(String filename) throws IOException {
-        IOFileCSV reader = new IOFileCSV(filename);
-        List<String[]> tweets = reader.readFile();
-        for (int i=0; i< tweets.size(); i++) {
-            String result = topicClassifier.classifyTweet(tweets.get(i)[0]);
-            System.out.println(result);
-        }
+    public void classifyTweet(String filename) throws IOException, Exception {
+        complaintClassifier.classifyUnseenData("");
+        topicClassifier.classifyTweet("");
+ //       IOFileCSV reader = new IOFileCSV(filename);
+//        List<String[]> tweets = reader.readFile();
+//        for (int i=0; i< tweets.size(); i++) {
+//            String result = topicClassifier.classifyTweet(tweets.get(i)[0]);
+//            System.out.println(result);
+//        }
     }
     
     public void evaluateModel() throws IOException, Exception {
         IOFileCSV reader = new IOFileCSV("data/testcase.csv");
         List<String[]> test = reader.readFile();
-        complaintClassifier.classifyUnseenData(test);
+        complaintClassifier.fullTraining();
         complaintClassifier.printResult();
+        //complaintClassifier.classifyUnseenData(test);
+        //complaintClassifier.printResult();
     }
     
 }

@@ -5,6 +5,7 @@
  */
 package complaintclassifier;
 
+import complaintmanagementsystem.PreprosesTweet;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -12,11 +13,15 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
 import weka.classifiers.trees.J48;
+import weka.core.Attribute;
+import weka.core.DenseInstance;
 import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.SerializationHelper;
@@ -82,17 +87,39 @@ public class ComplaintClassifier {
         eval.crossValidateModel(classifier, train, folds, new Random(1));     
     }
     
-    public void classifyUnseenData(List<String[]> data) throws IOException, Exception {
-        ComplaintFeatures cf = new ComplaintFeatures(data);
-        cf.writeToArff("data/complaintTest.arff", features);
-        
-        BufferedReader reader = new BufferedReader(new FileReader("data/complaintTest.arff"));
+    public void setTestCase(String filename) throws IOException, Exception {
+        BufferedReader reader = new BufferedReader(new FileReader(filename));
         Instances test = new Instances(reader);
-        test.setClassIndex(test.numAttributes() - 1);
         reader.close();
+        // setting class attribute
+        test.setClassIndex(test.numAttributes() - 1);
         
         eval = new Evaluation(train);
-        eval.evaluateModel(classifier, test);       
+        eval.evaluateModel(classifier, test);  
+    }
+    
+    public void classifyUnseenData(String tweet) throws Exception {
+        PreprosesTweet preproses = new PreprosesTweet();
+        tweet = preproses.preprocessTweet(tweet);
+        System.out.println(tweet);
+        
+        Instance newInstance = new DenseInstance(train.numAttributes());
+        newInstance.setDataset(train);
+        for(int i=0; i<train.numAttributes(); i++){
+            if(tweet.contains(train.attribute(i).name())) {
+                newInstance.setValue(train.attribute(i), 1);
+            } else {
+                newInstance.setValue(train.attribute(i), 0);
+            }
+        }
+        
+        
+        double clsLabel = classifier.classifyInstance(newInstance);
+        newInstance.setClassValue(clsLabel);
+        
+        String result = train.classAttribute().value((int) clsLabel);
+        
+        System.out.println("Hasil Classify Unseen Data: " + result);
     }
     
     public void saveModel(String filename) throws Exception {
@@ -106,13 +133,17 @@ public class ComplaintClassifier {
         writeFile("model/Complaint.features", featuresBuilder.toString());
     }
     
-    public void loadModel(String filename) throws Exception {
-        classifier = (Classifier) SerializationHelper.read(filename);
+    public void loadModel() throws Exception {
+        classifier = (Classifier) SerializationHelper.read("model/Complaint.model");
         
         // Load features
-        ArrayList<String> content = readFile("model/TopicClassifier.vocabulary");
-        features.addAll(content);
-        content.clear();
+        features = readFile("model/Complaint.features");
+        
+        //Load train data
+        BufferedReader reader = new BufferedReader(new FileReader("data/complainData.arff"));
+        train = new Instances(reader);
+        train.setClassIndex(train.numAttributes() - 1);
+        reader.close();
     }
     
     public void writeFile(String filename, String content) {

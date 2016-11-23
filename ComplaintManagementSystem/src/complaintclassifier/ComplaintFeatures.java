@@ -60,7 +60,7 @@ public class ComplaintFeatures {
         AttributeSelection selector = new AttributeSelection();
         InfoGainAttributeEval evaluator = new InfoGainAttributeEval();
         Ranker ranker = new Ranker();
-        ranker.setNumToSelect(Math.min(1000, data.numAttributes() - 1));
+        ranker.setNumToSelect(Math.min(2000, data.numAttributes() - 1));
         selector.setEvaluator(evaluator);
         selector.setSearch(ranker);
         selector.SelectAttributes(data);
