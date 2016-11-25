@@ -71,8 +71,7 @@ public class ComplaintManagementSystem {
             
             if(complaint.equals("complaint")) {
                 record[1] = "Ya";
-                record[2] = "Topik Sesuatu";
-                //record[2] = topicClassifier.classifyTweet(tweets.get(i)[0]);
+                record[2] = topicClassifier.classifyTweet(tweets.get(i)[0]);
                 
             } else {
                 record[1] = "Tidak";
