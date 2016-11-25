@@ -46,7 +46,9 @@ public class Main {
                 filename = input.nextLine();
                 cms.classifyTweet(filename);
             } else if (option == 4) {
-                cms.evaluateModel();
+                System.out.print("Enter csv filename: ");
+                filename = input.nextLine();
+                cms.evaluateModel(filename);
             }
             printMainMenu();     
             System.out.print("\n> Your option: ");

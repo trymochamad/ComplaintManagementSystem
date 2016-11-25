@@ -32,7 +32,7 @@ public class TopicClassifier {
     protected Map<String,double[]> condProb;
     
     // Daftar dinas
-    final static String[] topic = {
+    public final static String[] topic = {
         "Dinas Kependudukan dan Pencatatan Sipil",
         "Dinas Tata Ruang dan Ciptakarya",
         "Dinas Kebudayaan dan Pariwisata",
