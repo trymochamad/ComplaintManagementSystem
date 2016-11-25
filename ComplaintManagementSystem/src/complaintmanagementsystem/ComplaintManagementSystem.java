@@ -8,6 +8,8 @@ package complaintmanagementsystem;
 import complaintclassifier.ComplaintClassifier;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
 import topicclassifier.TopicClassifier;
@@ -71,12 +73,11 @@ public class ComplaintManagementSystem {
             
             if(complaint.equals("complaint")) {
                 record[1] = "Ya";
-                record[2] = "Topik Sesuatu";
-                //record[2] = topicClassifier.classifyTweet(tweets.get(i)[0]);
+                record[2] = topicClassifier.classifyTweet(tweets.get(i)[0]);
                 
             } else {
                 record[1] = "Tidak";
-                record[2] = "Bukan Keluhan";
+                record[2] = "bukan keluhan";
             }
             
             result.add(record);
@@ -87,13 +88,69 @@ public class ComplaintManagementSystem {
         
     }
     
-    public void evaluateModel() throws IOException, Exception {
-        IOFileCSV reader = new IOFileCSV("data/testcase.csv");
+    public void evaluateModel(String filename) throws IOException, Exception {
+        IOFileCSV reader = new IOFileCSV(filename);
         List<String[]> test = reader.readFile();
-        complaintClassifier.fullTraining();
-        complaintClassifier.printResult();
-        //complaintClassifier.classifyUnseenData(test);
-        //complaintClassifier.printResult();
+        
+        List<String> topics = new LinkedList<String> (Arrays.asList(TopicClassifier.topic));
+        topics.add("bukan keluhan");
+        
+        //Generate topics from test data
+        List<String> realTopics = new ArrayList(test.size());
+        for(int i=0; i<test.size(); i++){
+            realTopics.add(test.get(i)[2]);
+        }
+        
+        //initiate confussion matrix
+        int[][] confussionMatrix = new int[topics.size()][topics.size()];
+        for(int i=0; i<confussionMatrix.length; i++){
+            for(int j=0; j<confussionMatrix[i].length; j++){
+                confussionMatrix[i][j] = 0;
+            }
+        }
+        
+        int indexBar;
+        int indexKol;
+        for(int i=0; i<test.size(); i++) {
+            String complaint = complaintClassifier.classifyUnseenData(test.get(i)[0]);
+            indexBar = topics.indexOf(realTopics.get(i));
+            if(complaint.equals("complaint")){
+                String topic = topicClassifier.classifyTweet(test.get(i)[0]);
+                indexKol = topics.indexOf(topic);
+            } else {
+                indexKol = topics.indexOf("bukan keluhan");
+            }
+            confussionMatrix[indexBar][indexKol]++; 
+        }
+        
+        
+        int correct = 0;
+        for(int i=0; i<confussionMatrix.length; i++){
+            for(int j=0; j<confussionMatrix[i].length; j++){
+                if(i==j)
+                    correct+=confussionMatrix[i][j];
+            }
+        }
+        //Print Result
+        System.out.println("\n===========Confussion Matrix===========\n");
+        System.out.println("a\tb\tc\td\te\tf\tg\th\ti\tj\tk\tl\tm <--classified as");
+        for(int i=0; i<confussionMatrix.length; i++){
+            for(int j=0; j<confussionMatrix[i].length; j++){
+                System.out.print(confussionMatrix[i][j] + "\t");
+            }
+            System.out.println();
+        }
+        System.out.println();
+        for(int i=0; i<topics.size(); i++){
+            char index = (char)(i+97);
+            System.out.println(index + ": " + topics.get(i));
+        }
+        
+        System.out.println();
+        float percent = ((float)correct/(float)test.size()) * 100;
+        System.out.println("Correctly Classified Instances:\t\t" + percent + "%");
+        percent = 100 - percent;
+        System.out.println("Incorrectly Classified Instances:\t" + percent + "%");
     }
     
 }

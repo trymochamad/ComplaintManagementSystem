@@ -32,7 +32,7 @@ public class TopicClassifier {
     protected Map<String,double[]> condProb;
     
     // Daftar dinas
-    final static String[] topic = {
+    public final static String[] topic = {
         "Dinas Kependudukan dan Pencatatan Sipil",
         "Dinas Tata Ruang dan Ciptakarya",
         "Dinas Kebudayaan dan Pariwisata",
@@ -106,10 +106,8 @@ public class TopicClassifier {
             for (String token : vocabulary) {
                 counterToken.put(token, StringUtils.countMatches(text, token));
             }
-            int sum = 0;
-            for (Map.Entry<String,Integer> entry : counterToken.entrySet()) {
-                sum += entry.getValue();
-            }
+            ArrayList<String> tokens = tokenizer.tokenizeSentence(text);
+            int textLength = tokens.size();
             for (String token : vocabulary) {
                 double[] value;
                 if (condProb.containsKey(token)) {
@@ -119,7 +117,7 @@ public class TopicClassifier {
                     for (int j=0; j<12; j++)
                         value[j] = 0;
                 }
-                value[i] = (double) (counterToken.get(token) + 1) / (sum + (vocabulary.size()));
+                value[i] = (double) (counterToken.get(token) + 1) / (textLength + (vocabulary.size()));
                 condProb.put(token, value);
             }
         }
@@ -247,7 +245,8 @@ public class TopicClassifier {
         for (int i=0; i<12; i++) {
             score[i] = Math.log(prior[i]);
             for (String t : tokens) {
-                score[i] += Math.log(condProb.get(t)[i]);
+                if (vocabulary.contains(t))
+                    score[i] += Math.log(condProb.get(t)[i]);
             }
             if (score[i] > score[idxMax])
                 idxMax = i;
