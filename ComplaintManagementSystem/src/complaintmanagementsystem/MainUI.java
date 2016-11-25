@@ -5,14 +5,18 @@
  */
 package complaintmanagementsystem;
 
+import java.awt.print.PrinterException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 
 /**
  *
  * @author mochamadtry
  */
 public class MainUI extends javax.swing.JFrame {
+    ComplaintManagementSystem cms = new ComplaintManagementSystem();
 
     /**
      * Creates new form MainUI
@@ -21,7 +25,8 @@ public class MainUI extends javax.swing.JFrame {
         initComponents();
         MenuAwal.setVisible(true);
         BuildLoad.setVisible(false);
-        
+        LoadSuccess.setVisible(false);
+        MainMenu.setVisible(false);
     }
 
     /**
@@ -34,10 +39,21 @@ public class MainUI extends javax.swing.JFrame {
     private void initComponents() {
 
         jLayeredPane1 = new javax.swing.JLayeredPane();
+        MainMenu = new javax.swing.JPanel();
+        textFileName = new javax.swing.JTextField();
+        buttonFileName = new javax.swing.JButton();
+        LabelDataTweet = new javax.swing.JLabel();
+        proses = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTable1 = new javax.swing.JTable();
         MenuAwal = new javax.swing.JPanel();
         LogoAps = new javax.swing.JLabel();
         MulaiAps = new javax.swing.JLabel();
         copyright = new javax.swing.JLabel();
+        LoadSuccess = new javax.swing.JPanel();
+        LoginFailedPanel1 = new javax.swing.JPanel();
+        LoginFailed1 = new javax.swing.JLabel();
+        LoginFailedButton1 = new javax.swing.JButton();
         BuildLoad = new javax.swing.JPanel();
         buildModel = new javax.swing.JButton();
         loadModel = new javax.swing.JButton();
@@ -47,6 +63,80 @@ public class MainUI extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jLayeredPane1.setLayout(new javax.swing.OverlayLayout(jLayeredPane1));
+
+        MainMenu.setBackground(new java.awt.Color(204, 255, 255));
+        MainMenu.setMinimumSize(new java.awt.Dimension(960, 560));
+
+        textFileName.setEditable(false);
+        textFileName.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                textFileNameActionPerformed(evt);
+            }
+        });
+
+        buttonFileName.setText("...");
+        buttonFileName.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonFileNameActionPerformed(evt);
+            }
+        });
+
+        LabelDataTweet.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        LabelDataTweet.setText("Data Tweet");
+
+        proses.setText("Proses");
+        proses.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                prosesActionPerformed(evt);
+            }
+        });
+
+        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Tweet", "Keluhan", "Dinas Tekait", "Sumber"
+            }
+        ));
+        jScrollPane1.setViewportView(jTable1);
+
+        javax.swing.GroupLayout MainMenuLayout = new javax.swing.GroupLayout(MainMenu);
+        MainMenu.setLayout(MainMenuLayout);
+        MainMenuLayout.setHorizontalGroup(
+            MainMenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(MainMenuLayout.createSequentialGroup()
+                .addGap(50, 50, 50)
+                .addGroup(MainMenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(LabelDataTweet)
+                    .addGroup(MainMenuLayout.createSequentialGroup()
+                        .addComponent(textFileName, javax.swing.GroupLayout.PREFERRED_SIZE, 354, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(buttonFileName, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(proses))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 1185, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(494, Short.MAX_VALUE))
+        );
+        MainMenuLayout.setVerticalGroup(
+            MainMenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(MainMenuLayout.createSequentialGroup()
+                .addGap(32, 32, 32)
+                .addComponent(LabelDataTweet)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(MainMenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(textFileName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(buttonFileName)
+                    .addComponent(proses))
+                .addGap(54, 54, 54)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(429, Short.MAX_VALUE))
+        );
+
+        jLayeredPane1.add(MainMenu);
 
         MenuAwal.setBackground(new java.awt.Color(204, 255, 255));
         MenuAwal.setMinimumSize(new java.awt.Dimension(960, 560));
@@ -70,22 +160,22 @@ public class MainUI extends javax.swing.JFrame {
             .addGroup(MenuAwalLayout.createSequentialGroup()
                 .addGroup(MenuAwalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(MenuAwalLayout.createSequentialGroup()
-                        .addGap(317, 317, 317)
-                        .addComponent(LogoAps))
-                    .addGroup(MenuAwalLayout.createSequentialGroup()
                         .addGap(613, 613, 613)
                         .addComponent(MulaiAps))
                     .addGroup(MenuAwalLayout.createSequentialGroup()
                         .addGap(518, 518, 518)
-                        .addComponent(copyright)))
-                .addContainerGap(640, Short.MAX_VALUE))
+                        .addComponent(copyright))
+                    .addGroup(MenuAwalLayout.createSequentialGroup()
+                        .addGap(263, 263, 263)
+                        .addComponent(LogoAps)))
+                .addContainerGap(694, Short.MAX_VALUE))
         );
         MenuAwalLayout.setVerticalGroup(
             MenuAwalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(MenuAwalLayout.createSequentialGroup()
-                .addGap(66, 66, 66)
+                .addGap(69, 69, 69)
                 .addComponent(LogoAps)
-                .addGap(102, 102, 102)
+                .addGap(99, 99, 99)
                 .addComponent(MulaiAps)
                 .addGap(95, 95, 95)
                 .addComponent(copyright)
@@ -93,6 +183,63 @@ public class MainUI extends javax.swing.JFrame {
         );
 
         jLayeredPane1.add(MenuAwal);
+
+        LoadSuccess.setMinimumSize(new java.awt.Dimension(960, 560));
+        LoadSuccess.setOpaque(false);
+
+        LoginFailed1.setFont(new java.awt.Font("Prestige Elite Std", 1, 18)); // NOI18N
+        LoginFailed1.setText("LOAD MODEL SUCCESS");
+
+        LoginFailedButton1.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        LoginFailedButton1.setText("OK");
+        LoginFailedButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                LoginFailedButton1ActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout LoginFailedPanel1Layout = new javax.swing.GroupLayout(LoginFailedPanel1);
+        LoginFailedPanel1.setLayout(LoginFailedPanel1Layout);
+        LoginFailedPanel1Layout.setHorizontalGroup(
+            LoginFailedPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(LoginFailedPanel1Layout.createSequentialGroup()
+                .addGroup(LoginFailedPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(LoginFailedPanel1Layout.createSequentialGroup()
+                        .addGap(100, 100, 100)
+                        .addComponent(LoginFailed1))
+                    .addGroup(LoginFailedPanel1Layout.createSequentialGroup()
+                        .addGap(181, 181, 181)
+                        .addComponent(LoginFailedButton1)))
+                .addContainerGap(106, Short.MAX_VALUE))
+        );
+        LoginFailedPanel1Layout.setVerticalGroup(
+            LoginFailedPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(LoginFailedPanel1Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(LoginFailed1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(LoginFailedButton1)
+                .addGap(110, 110, 110))
+        );
+
+        javax.swing.GroupLayout LoadSuccessLayout = new javax.swing.GroupLayout(LoadSuccess);
+        LoadSuccess.setLayout(LoadSuccessLayout);
+        LoadSuccessLayout.setHorizontalGroup(
+            LoadSuccessLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(LoadSuccessLayout.createSequentialGroup()
+                .addGap(446, 446, 446)
+                .addComponent(LoginFailedPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(864, Short.MAX_VALUE))
+        );
+        LoadSuccessLayout.setVerticalGroup(
+            LoadSuccessLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, LoadSuccessLayout.createSequentialGroup()
+                .addContainerGap(636, Short.MAX_VALUE)
+                .addComponent(LoginFailedPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(271, 271, 271))
+        );
+
+        jLayeredPane1.add(LoadSuccess);
 
         BuildLoad.setBackground(new java.awt.Color(204, 255, 255));
 
@@ -164,7 +311,7 @@ public class MainUI extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 973, Short.MAX_VALUE)
+            .addGap(0, 994, Short.MAX_VALUE)
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
                     .addGap(0, 0, Short.MAX_VALUE)
@@ -183,17 +330,15 @@ public class MainUI extends javax.swing.JFrame {
     private void loadModelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadModelActionPerformed
         // TODO add your handling code here:
         boolean finishproses = false; 
-        ComplaintManagementSystem cms = new ComplaintManagementSystem();
+        //ComplaintManagementSystem cms = new ComplaintManagementSystem();
         try {
             cms.loadModel();
             finishproses = true;
-            System.out.println("lalal");
         } catch (Exception ex) {
             Logger.getLogger(MainUI.class.getName()).log(Level.SEVERE, null, ex);
         }
         if (finishproses){
-            BuildLoad.setVisible(false);
-            MenuAwal.setVisible(true);
+            LoadSuccess.setVisible(true);
         }
     }//GEN-LAST:event_loadModelActionPerformed
 
@@ -204,6 +349,35 @@ public class MainUI extends javax.swing.JFrame {
         
         
     }//GEN-LAST:event_MulaiApsMousePressed
+
+    private void LoginFailedButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_LoginFailedButton1ActionPerformed
+        // TODO add your handling code here:
+         BuildLoad.setVisible(false);
+        LoadSuccess.setVisible(false);
+        MainMenu.setVisible(true);
+    }//GEN-LAST:event_LoginFailedButton1ActionPerformed
+
+    private void textFileNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textFileNameActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_textFileNameActionPerformed
+
+    private void buttonFileNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonFileNameActionPerformed
+        final JFileChooser fileDialog = new JFileChooser();
+        int returnVal = fileDialog.showOpenDialog(this);
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            String fileName = fileDialog.getSelectedFile().getPath();
+            textFileName.setText(fileName);
+        }
+    }//GEN-LAST:event_buttonFileNameActionPerformed
+
+    private void prosesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_prosesActionPerformed
+        System.out.println(textFileName.getText());
+        try {
+                cms.classifyTweet(textFileName.getText());
+            } catch (Exception ex) {
+                Logger.getLogger(MainUI.class.getName()).log(Level.SEVERE, null, ex);
+            }
+    }//GEN-LAST:event_prosesActionPerformed
 
     /**
      * @param args the command line arguments
@@ -240,14 +414,25 @@ public class MainUI extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel BuildLoad;
+    private javax.swing.JLabel LabelDataTweet;
+    private javax.swing.JPanel LoadSuccess;
+    private javax.swing.JLabel LoginFailed1;
+    private javax.swing.JButton LoginFailedButton1;
+    private javax.swing.JPanel LoginFailedPanel1;
     private javax.swing.JLabel LogoAps;
     private javax.swing.JLabel LogoAps1;
+    private javax.swing.JPanel MainMenu;
     private javax.swing.JPanel MenuAwal;
     private javax.swing.JLabel MulaiAps;
     private javax.swing.JButton buildModel;
+    private javax.swing.JButton buttonFileName;
     private javax.swing.JLabel copyright;
     private javax.swing.JLabel copyright1;
     private javax.swing.JLayeredPane jLayeredPane1;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTable jTable1;
     private javax.swing.JButton loadModel;
+    private javax.swing.JButton proses;
+    private javax.swing.JTextField textFileName;
     // End of variables declaration//GEN-END:variables
 }
