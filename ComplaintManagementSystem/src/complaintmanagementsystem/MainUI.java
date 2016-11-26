@@ -322,7 +322,17 @@ public class MainUI extends javax.swing.JFrame {
 
     private void buildModelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buildModelActionPerformed
         // TODO add your handling code here:
-        
+        boolean finishproses = false; 
+        //ComplaintManagementSystem cms = new ComplaintManagementSystem();
+        try {
+            cms.buildModel();
+            finishproses = true;
+        } catch (Exception ex) {
+            Logger.getLogger(MainUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        if (finishproses){
+            LoadSuccess.setVisible(true);
+        }
     }//GEN-LAST:event_buildModelActionPerformed
 
     private void loadModelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadModelActionPerformed

@@ -93,7 +93,7 @@ public class ComplaintManagementSystem {
         List<String[]> test = reader.readFile();
         
         List<String> topics = new LinkedList<String> (Arrays.asList(TopicExtraction.topic));
-        System.out.println(topics);
+        //System.out.println(topics);
         topics.add("bukan keluhan");
         
         //Generate topics from test data
