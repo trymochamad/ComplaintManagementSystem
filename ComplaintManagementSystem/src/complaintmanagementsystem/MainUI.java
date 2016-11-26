@@ -57,7 +57,6 @@ public class MainUI extends javax.swing.JFrame {
         LabelDataTweet = new javax.swing.JLabel();
         proses = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
         MenuAwal = new javax.swing.JPanel();
         LogoAps = new javax.swing.JLabel();
         MulaiAps = new javax.swing.JLabel();
@@ -103,19 +102,6 @@ public class MainUI extends javax.swing.JFrame {
             }
         });
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Tweet", "Keluhan", "Dinas Tekait", "Sumber"
-            }
-        ));
-        jScrollPane1.setViewportView(jTable1);
-
         javax.swing.GroupLayout MainMenuLayout = new javax.swing.GroupLayout(MainMenu);
         MainMenu.setLayout(MainMenuLayout);
         MainMenuLayout.setHorizontalGroup(
@@ -144,8 +130,8 @@ public class MainUI extends javax.swing.JFrame {
                     .addComponent(buttonFileName)
                     .addComponent(proses))
                 .addGap(54, 54, 54)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(429, Short.MAX_VALUE))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 794, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(37, Short.MAX_VALUE))
         );
 
         jLayeredPane1.add(MainMenu);
@@ -394,31 +380,38 @@ public class MainUI extends javax.swing.JFrame {
         if (prosesFinish){
             JFrame frame = new JFrame();
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            //jScrollPane1.setVisible(true);
             String fileName = "test/result.csv";
             IOFileCSV reader = new IOFileCSV(fileName);
             try {
-                //jTable1.setSize(2,100);
                 List<String[]> test = reader.readFile();
-                Vector<String> rowOne = new Vector<String>(test.size());
-                for(int i=0; i<test.size(); i++){
-                    rowOne.addElement(test.get(i)[0]);
-                    //jTable1.setValueAt(rowOne.get(i), i, 0);
-                }
+                String data[][] = new String[test.size()][];
+                data = test.toArray(data);
+                String column[]={"Tweet","Keluhan","Topik"};
+                
+                JTable jt = new JTable(data,column);
+                jScrollPane1.getViewport ().add (jt);
+                jScrollPane1.setVisible(true);
+                
+//                Vector<String> rowOne = new Vector<String>(test.size());
+                
+//                for(int i=0; i<test.size(); i++){
+//                    rowOne.addElement(test.get(i)[0]);
+//                    //jTable1.setValueAt(rowOne.get(i), i, 0);
+//                }
                 
                 //Generate kategori keluhan from test data 
-                Vector<String> rowTwo = new Vector<String>(test.size());
-                for(int i=0; i<test.size(); i++){
-                    rowTwo.add(test.get(i)[1]);
-                    jTable1.setValueAt(rowTwo.get(i), i, 1);
-                }
+//                Vector<String> rowTwo = new Vector<String>(test.size());
+//                for(int i=0; i<test.size(); i++){
+//                    rowTwo.add(test.get(i)[1]);
+//                    jTable1.setValueAt(rowTwo.get(i), i, 1);
+//                }
                 //System.out.println(realKeluhan);
                 //Generate topics from test data
-                Vector<String> rowThree = new Vector<String>(test.size());
-                for(int i=0; i<test.size(); i++){
-                    rowThree.add(test.get(i)[2]);
-                    //jTable1.setValueAt(rowThree.get(i), i, 2);
-                }
+//                Vector<String> rowThree = new Vector<String>(test.size());
+//                for(int i=0; i<test.size(); i++){
+//                    rowThree.add(test.get(i)[2]);
+//                    //jTable1.setValueAt(rowThree.get(i), i, 2);
+//                }
 //               // System.out.println(realTopics);
 //                Vector<Vector> rowData = new Vector<Vector>();
 //                rowData.addElement(rowOne);
@@ -496,7 +489,6 @@ public class MainUI extends javax.swing.JFrame {
     private javax.swing.JLabel copyright1;
     private javax.swing.JLayeredPane jLayeredPane1;
     private javax.swing.JScrollPane jScrollPane1;
-    public javax.swing.JTable jTable1;
     private javax.swing.JButton loadModel;
     private javax.swing.JButton proses;
     private javax.swing.JTextField textFileName;
