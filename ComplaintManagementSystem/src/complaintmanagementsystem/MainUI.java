@@ -5,11 +5,23 @@
  */
 package complaintmanagementsystem;
 
+import java.awt.BorderLayout;
+import java.awt.Point;
 import java.awt.print.PrinterException;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.table.TableColumn;
+import static weka.core.Instances.test;
 
 /**
  *
@@ -347,7 +359,6 @@ public class MainUI extends javax.swing.JFrame {
         BuildLoad.setVisible(true);
         MenuAwal.setVisible(false);
         
-        
     }//GEN-LAST:event_MulaiApsMousePressed
 
     private void LoginFailedButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_LoginFailedButton1ActionPerformed
@@ -355,6 +366,7 @@ public class MainUI extends javax.swing.JFrame {
          BuildLoad.setVisible(false);
         LoadSuccess.setVisible(false);
         MainMenu.setVisible(true);
+        jScrollPane1.setVisible(true);
     }//GEN-LAST:event_LoginFailedButton1ActionPerformed
 
     private void textFileNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textFileNameActionPerformed
@@ -371,12 +383,66 @@ public class MainUI extends javax.swing.JFrame {
     }//GEN-LAST:event_buttonFileNameActionPerformed
 
     private void prosesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_prosesActionPerformed
-        System.out.println(textFileName.getText());
+        boolean prosesFinish = false;
         try {
                 cms.classifyTweet(textFileName.getText());
+                prosesFinish = true;
+                
             } catch (Exception ex) {
                 Logger.getLogger(MainUI.class.getName()).log(Level.SEVERE, null, ex);
             }
+        if (prosesFinish){
+            JFrame frame = new JFrame();
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            //jScrollPane1.setVisible(true);
+            String fileName = "test/result.csv";
+            IOFileCSV reader = new IOFileCSV(fileName);
+            try {
+                //jTable1.setSize(2,100);
+                List<String[]> test = reader.readFile();
+                Vector<String> rowOne = new Vector<String>(test.size());
+                for(int i=0; i<test.size(); i++){
+                    rowOne.addElement(test.get(i)[0]);
+                    //jTable1.setValueAt(rowOne.get(i), i, 0);
+                }
+                
+                //Generate kategori keluhan from test data 
+                Vector<String> rowTwo = new Vector<String>(test.size());
+                for(int i=0; i<test.size(); i++){
+                    rowTwo.add(test.get(i)[1]);
+                    jTable1.setValueAt(rowTwo.get(i), i, 1);
+                }
+                //System.out.println(realKeluhan);
+                //Generate topics from test data
+                Vector<String> rowThree = new Vector<String>(test.size());
+                for(int i=0; i<test.size(); i++){
+                    rowThree.add(test.get(i)[2]);
+                    //jTable1.setValueAt(rowThree.get(i), i, 2);
+                }
+//               // System.out.println(realTopics);
+//                Vector<Vector> rowData = new Vector<Vector>();
+//                rowData.addElement(rowOne);
+//                //rowData.addElement(rowTwo);
+//                //rowData.addElement(rowThree);
+//                System.out.println(rowData);
+//
+//                Vector<String> columnNames = new Vector<String>();
+//                columnNames.addElement("Tweet");
+//                columnNames.addElement("Keluhan");
+//                columnNames.addElement("Dinas");
+//                
+//                
+//                JTable table = new JTable(rowData, columnNames);
+//                JScrollPane scrollPane = new JScrollPane(table);
+//                scrollPane.getViewport().setViewPosition(new Point(0,0));
+//                frame.add(scrollPane, BorderLayout.CENTER);
+//                frame.setSize(300, 150);
+//                frame.setVisible(true);
+            } catch (IOException ex) {
+                Logger.getLogger(MainUI.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
+        }
     }//GEN-LAST:event_prosesActionPerformed
 
     /**
@@ -430,7 +496,7 @@ public class MainUI extends javax.swing.JFrame {
     private javax.swing.JLabel copyright1;
     private javax.swing.JLayeredPane jLayeredPane1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
+    public javax.swing.JTable jTable1;
     private javax.swing.JButton loadModel;
     private javax.swing.JButton proses;
     private javax.swing.JTextField textFileName;

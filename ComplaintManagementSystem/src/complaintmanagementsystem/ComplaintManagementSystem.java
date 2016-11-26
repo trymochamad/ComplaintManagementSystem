@@ -93,13 +93,16 @@ public class ComplaintManagementSystem {
         List<String[]> test = reader.readFile();
         
         List<String> topics = new LinkedList<String> (Arrays.asList(TopicClassifier.topic));
+        System.out.println(topics);
         topics.add("bukan keluhan");
         
         //Generate topics from test data
         List<String> realTopics = new ArrayList(test.size());
         for(int i=0; i<test.size(); i++){
             realTopics.add(test.get(i)[2]);
+            //System.out.println(realTopics.get(i));
         }
+        
         
         //initiate confussion matrix
         int[][] confussionMatrix = new int[topics.size()][topics.size()];
