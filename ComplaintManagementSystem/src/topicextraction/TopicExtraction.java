@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package topicclassifier;
+package topicextraction;
 
 import IndonesianNLP.IndonesianSentenceTokenizer;
 import java.io.BufferedReader;
@@ -24,7 +24,7 @@ import org.apache.commons.lang3.StringUtils;
  *
  * @author TOSHIBA PC
  */
-public class TopicClassifier {
+public class TopicExtraction {
     
     protected IndonesianSentenceTokenizer tokenizer;
     protected Set<String> vocabulary;
@@ -47,7 +47,7 @@ public class TopicClassifier {
         "Lain-Lain"
     };
     
-    public TopicClassifier() {
+    public TopicExtraction() {
         tokenizer = new IndonesianSentenceTokenizer();
         vocabulary = new HashSet<>();
         prior = new double[12];
@@ -128,19 +128,19 @@ public class TopicClassifier {
     
     public void loadModel() {
         // Load vocabulary
-        ArrayList<String> content = readFile("model/TopicClassifier.vocabulary");
+        ArrayList<String> content = readFile("model/TopicExtraction.vocabulary");
         this.vocabulary.addAll(content);
         content.clear();
         
         // Load prior
-        content = readFile("model/TopicClassifier.prior");
+        content = readFile("model/TopicExtraction.prior");
         for (int i=0; i<12; i++) {
             this.prior[i] = Double.parseDouble(content.get(i));
         }
         content.clear();
         
         // Load condProb
-        content = readFile("model/TopicClassifier.condProb");
+        content = readFile("model/TopicExtraction.condProb");
         for (int i=0; i<content.size(); i++) {
             String[] strArray = content.get(i).split(" ");
             double[] value = new double[strArray.length-1];
@@ -158,14 +158,14 @@ public class TopicClassifier {
         for (String token : vocabulary) {
             vocabBuilder.append(token).append("\n");
         }
-        writeFile("model/TopicClassifier.vocabulary", vocabBuilder.toString());
+        writeFile("model/TopicExtraction.vocabulary", vocabBuilder.toString());
         
         // Save prior
         StringBuilder priorBuilder = new StringBuilder();
         for (int i=0; i<prior.length; i++) {
             priorBuilder.append(prior[i]).append("\n");
         }
-        writeFile("model/TopicClassifier.prior", priorBuilder.toString());
+        writeFile("model/TopicExtraction.prior", priorBuilder.toString());
         
         // Save condProb
         StringBuilder condProbBuilder = new StringBuilder();
@@ -177,7 +177,7 @@ public class TopicClassifier {
             }
             condProbBuilder.append("\n");
         }
-        writeFile("model/TopicClassifier.condProb", condProbBuilder.toString());
+        writeFile("model/TopicExtraction.condProb", condProbBuilder.toString());
     }
     
     public ArrayList<String> readFile(String filename) {    

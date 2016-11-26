@@ -386,7 +386,7 @@ public class MainUI extends javax.swing.JFrame {
                 List<String[]> test = reader.readFile();
                 String data[][] = new String[test.size()][];
                 data = test.toArray(data);
-                String column[]={"Tweet","Keluhan","Topik"};
+                String column[]={"Tweet","Keluhan","Dinas"};
                 
                 JTable jt = new JTable(data,column);
                 jScrollPane1.getViewport ().add (jt);

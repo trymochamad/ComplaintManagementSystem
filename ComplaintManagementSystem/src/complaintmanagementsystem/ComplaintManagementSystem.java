@@ -12,7 +12,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
-import topicclassifier.TopicClassifier;
+import topicextraction.TopicExtraction;
 
 
 
@@ -23,11 +23,11 @@ import topicclassifier.TopicClassifier;
 public class ComplaintManagementSystem {
     
     protected ComplaintClassifier complaintClassifier;
-    protected TopicClassifier topicClassifier;
+    protected TopicExtraction topicExtraction;
     
     public ComplaintManagementSystem() {
         complaintClassifier = new ComplaintClassifier();
-        topicClassifier = new TopicClassifier();
+        topicExtraction = new TopicExtraction();
     }
     
     public void buildModel() throws IOException, Exception {
@@ -46,14 +46,14 @@ public class ComplaintManagementSystem {
         complaintClassifier.buildClassifierJ48();
         complaintClassifier.printTree();
         
-        topicClassifier.buildModel(tweets);
+        topicExtraction.buildModel(tweets);
     }
     
     public void loadModel() throws Exception {
         // Load complaintClassifier
         complaintClassifier.loadModel();
         // Load topicClassifier
-        topicClassifier.loadModel();
+        topicExtraction.loadModel();
     }
     
     public void classifyTweet(String filename) throws IOException, Exception {
@@ -63,7 +63,7 @@ public class ComplaintManagementSystem {
         List<String[]> result = new ArrayList();
         result.add(new String[] {"Labelled Tweet","",""});
         result.add(new String[] {"","",""});
-        result.add(new String[] {"Tweet","Keluhan","Topik"});
+        result.add(new String[] {"Tweet","Keluhan","Dinas"});
         
         for (int i=0; i< tweets.size(); i++) {
             String[] record = new String[3];
@@ -73,7 +73,7 @@ public class ComplaintManagementSystem {
             
             if(complaint.equals("complaint")) {
                 record[1] = "Ya";
-                record[2] = topicClassifier.classifyTweet(tweets.get(i)[0]);
+                record[2] = topicExtraction.classifyTweet(tweets.get(i)[0]);
                 
             } else {
                 record[1] = "Tidak";
@@ -92,7 +92,7 @@ public class ComplaintManagementSystem {
         IOFileCSV reader = new IOFileCSV(filename);
         List<String[]> test = reader.readFile();
         
-        List<String> topics = new LinkedList<String> (Arrays.asList(TopicClassifier.topic));
+        List<String> topics = new LinkedList<String> (Arrays.asList(TopicExtraction.topic));
         System.out.println(topics);
         topics.add("bukan keluhan");
         
@@ -118,7 +118,7 @@ public class ComplaintManagementSystem {
             String complaint = complaintClassifier.classifyUnseenData(test.get(i)[0]);
             indexBar = topics.indexOf(realTopics.get(i));
             if(complaint.equals("complaint")){
-                String topic = topicClassifier.classifyTweet(test.get(i)[0]);
+                String topic = topicExtraction.classifyTweet(test.get(i)[0]);
                 indexKol = topics.indexOf(topic);
             } else {
                 indexKol = topics.indexOf("bukan keluhan");
